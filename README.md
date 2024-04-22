@@ -1,1 +1,1 @@
-Backend project, creating backend web application similat to youtube.
+Backend project, creating backend web application similar to youtube.
