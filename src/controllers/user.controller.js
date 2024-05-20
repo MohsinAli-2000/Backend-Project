@@ -3,7 +3,8 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { User } from "../models/user.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
-const regiterUser = asyncHandler(async (req, res) => {
+
+const registerUser = asyncHandler(async (req, res) => {
   const { email, username, fullname, password } = req.body;
 
   // Check if any required field is missing
@@ -17,12 +18,19 @@ const regiterUser = asyncHandler(async (req, res) => {
   });
 
   if (userAlreadyExist) {
-    throw new ApiError(409, "User with this email or username already exist.");
+    throw new ApiError(409, "User with this email or username already exists.");
   }
 
   // Get file paths
   const avatarLocalPath = req.files?.avatar?.[0]?.path;
-  const coverimageLocalPath = req.files?.coverimage?.[0]?.path;
+  let coverimageLocalPath;
+  if (
+    req.files &&
+    Array.isArray(req.files.coverimage) &&
+    req.files.coverimage.length > 0
+  ) {
+    coverimageLocalPath = req.files.coverimage[0].path; // Fixed path assignment
+  }
 
   // Check if avatar is provided
   if (!avatarLocalPath) {
@@ -64,4 +72,4 @@ const regiterUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, createdUser, "User registered successfully"));
 });
 
-export { regiterUser };
+export { registerUser };
